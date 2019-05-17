@@ -13,13 +13,6 @@
       * [Kubernetes Engine Cluster 4](#gke-cluster-4)
       * [Other Resources](#other-resources-1)
    * [Notes](#notes)
-* [Prerequisites](#prerequisites)
-   * [Run Demo in a Google Cloud Shell](#run-demo-in-a-google-cloud-shell)
-   * [Supported Operating Systems](#supported-operating-systems)
-   * [Tools](#tools)
-   * [Versions](#versions)
-   * [Setup](#setup)
-   * [Directory Structure](#directory-structure)
 * [Deployment Steps](#deployment-steps)
 * [Validation](#validation)
 * [Verify the pod-to-service communication](#verify-the-pod-to-service-communication)
@@ -86,14 +79,14 @@ those clusters.
 |Gateway name|Google IP address|Network|Region|Tunnels
 |---|---|---|---|---|
 |vpn1-deployment-gateway|x.x.x.x|network1|us-west1|vpn1-deployment-tunnel|
-|vpn2-deployment-gateway|x.x.x.x|network1|us-central1|vpn2-deployment-tunnel|
+|vpn2-deployment-gateway|x.x.x.x|network1|us-east1|vpn2-deployment-tunnel|
 
 1. VPN Tunnels
 
 |Tunnel name|Status|Google gateway|Google IP address|Google network|Region|Peer IP address|Routing type
 |---|---|---|---|---|---|---|---|
 |vpn1-deployment-tunnel|Established|vpn1-deployment-gateway|x.x.x.x|network1|us-west1|vpn3-static-ip|Route-based|
-|vpn2-deployment-tunnel|Established|vpn2-deployment-gateway|x.x.x.x|network1|us-central1|vpn4-static-ip|Route-based|
+|vpn2-deployment-tunnel|Established|vpn2-deployment-gateway|x.x.x.x|network1|us-east1|vpn4-static-ip|Route-based|
 
 ### GCP Network 2
 #### Kubernetes Engine Cluster 3
@@ -109,7 +102,7 @@ those clusters.
 
 |cluster-ipv4-cidr|service-ipv4-cidr|zone|Initial Node count|Node Image
 |---|---|---|---|---|
-|10.138.0.0/19|10.238.0.0/20|us-central1-c|3|COS|
+|10.138.0.0/19|10.238.0.0/20|us-central1-c|3|COS
 
 #### Other Resources
 1. Cluster IP, Nodeport, ILB, LB and Ingress services to expose pods in each of
@@ -119,67 +112,19 @@ those clusters.
 |Gateway name|Google IP address|Network|Region|Tunnels|
 |---|---|---|---|---|
 |vpn3-deployment-gateway|x.x.x.x|network2|us-west1|vpn3-deployment-tunnel|
-|vpn4-deployment-gateway|x.x.x.x|network2|us-central1|vpn4-deployment-tunnel|
+|vpn4-deployment-gateway|x.x.x.x|network2|us-east1|vpn4-deployment-tunnel|
 
 1. VPN Tunnels
 
 |Tunnel name|Status|Google gateway|Google IP address|Google network|Region|Peer IP address|Routing type|
 |---|---|---|---|---|---|---|---|
 |vpn3-deployment-tunnel|Established|vpn3-deployment-gateway|x.x.x.x|network2|us-west1|vpn1-static-ip|Route-based|
-|vpn4-deployment-tunnel|Established|vpn4-deployment-gateway|x.x.x.x|network2|us-central1|vpn2-static-ip|Route-based|
+|vpn4-deployment-tunnel|Established|vpn4-deployment-gateway|x.x.x.x|network2|us-east1|vpn2-static-ip|Route-based|
 
 ### Notes
 1. Region for subnets and Node CIDR can be customized in /network/network.yaml.
 1. Cluster attributes like zone, image, node count, cluster CIDR and service CIDR can be customized in clusters/cluster.yaml.
 1. To add additional custom attributes to network or clusters, yaml files (*.yaml) and deployment manager scripts (*.py) at "/network/" or "/clusters/" need to be updated accordingly.
-
-## Prerequisites
-
-A Google Cloud account and project is required for this.
-
-Access to an existing Google Cloud project with the Kubernetes Engine service enabled
-If you do not have a Google Cloud account please signup for a free trial
-[here](https://cloud.google.com).
-
-### Run Demo in a Google Cloud Shell
-
-Click the button below to run the demo in a [Google Cloud Shell](https://cloud.google.com/shell/docs/).
-
-[![Open in Cloud Shell](http://gstatic.com/cloudssh/images/open-btn.svg)](https://console.cloud.google.com/cloudshell/open?cloudshell_git_repo=https://github.com/GoogleCloudPlatform/gke-networking-demos.git&cloudshell_git_branch=master&cloudshell_working_dir=gke-to-gke-vpn&cloudshell_tutorial=README.md)
-
-All the tools for the demo are installed. When using Cloud Shell execute the following
-command in order to setup gcloud cli.
-
-```console
-gcloud init
-```
-
-### Supported Operating Systems
-
-This project will run on macOS, or in a [Google Cloud Shell](https://cloud.google.com/shell/docs/).
-
-### Tools
-
-When not using Cloud Shell, the following tools are required.
-
-1. gcloud cli  ( >= Google Cloud SDK 200.0.0 )
-2. bash
-3. kubectl - ( >= v1.10.0-gke.0 )
-4. jq
-
-### Versions
-1. Kubernetes Engine >= 1.10.0-gke.0
-
-### Setup
-
-1. Pull the code from git repo.
-1. Optionally, customize the configuration in .yaml files under /network/ or /clusters/ or /manifests/, if needed.
-
-### Directory Structure
-1. The root folder is the "Kubernetes Engine-networking-demos" folder.
-1. The "network" folder contains the manifest files and Deployment Manager templates to setup networks.
-1. The "clusters" folder contains the manifest files and Deployment Manager templates to create Kubernetes Engine clusters.
-1. The "manifests" folder contains the manifest files to create Kubernetes Engine services.
 
 ## Deployment Steps
 
@@ -194,6 +139,7 @@ The following steps will allow a user to run this demo.
 1. Use the navigation menu, accessible at the top-left of the console, to select services in the following steps.
 ![Navigation Menu](../images/nav_menu_demo.png)
 1. Select "VPC networks" and confirm that CIDR ranges of subnet1-us-west1 is 10.1.0.0/28 and subnet2-us-central1 is 10.2.0.0/28
+
 the specification.
 ![VPC Networks](../images/vpc_networks.png)
 1. Select "Compute Engine"-> VM instances and see that the cluster VM instances are are drawn from the subnet's CIDR ranges.

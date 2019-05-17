@@ -12,17 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# cluster ip service configuration
+FROM nginx:alpine
 
-apiVersion: v1
-kind: Service
-metadata:
-  name: my-nginx-2
-  labels:
-    run: my-nginx
-spec:
-  ports:
-  - port: 80
-    protocol: TCP
-  selector:
-    run: my-nginx
+RUN apk add --no-cache curl=7.64.0-r1

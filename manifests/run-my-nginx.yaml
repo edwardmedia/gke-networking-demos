@@ -29,11 +29,7 @@ spec:
     spec:
       containers:
       - name: my-nginx
-        image: nginx
+        image: gcr.io/pso-examples/nginx-curl:1.0.0
         ports:
         - containerPort: 80
-      - name: my-test
-# we need to find a smaller image for this
-        image: gcr.io/k8s-testimages/kettle:latest
-        command: ["/usr/bin/tail"]
-        args: ["-f", "/dev/null"]
+

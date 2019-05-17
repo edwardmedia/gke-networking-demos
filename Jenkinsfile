@@ -66,6 +66,9 @@ spec:
           sh "gcloud config set compute/zone ${env.CLUSTER_ZONE}"
           sh "gcloud config set core/project ${env.PROJECT_ID}"
           sh "gcloud config set compute/region ${env.REGION}"
+
+          // Build and push container image to pso_examples
+          sh "make build_container"
          }
     }
     stage('Lint') {
@@ -73,7 +76,7 @@ spec:
           sh "make lint"
       }
     }
-
+/*
     stage('gke-to-gke-peering-create') {
        container(containerName) {
           // You can use dir to set the working directory
@@ -83,28 +86,24 @@ spec:
         }
     }
     stage('gke-to-gke-peering-validate') {
+          // Give the service resources time to get their external addresses
           container(containerName) {
             dir('gke-to-gke-peering') {
-              // Give the service resources time to get their external addresses
-              sleep 360
-              sh './validate-pod-to-service-communication.sh'
+              sh './validate.sh'
             }
+
+            sh './validate-pod-to-service-communication.sh'
           }
       }
 
     stage('gke-to-gke-peering-cleanup') {
           container(containerName) {
             dir('gke-to-gke-peering') {
-              /**
-              Cleaning up as part of the regular pipeline since these projects
-              have unusually high resource requirements and we don't want
-              to hit quota
-              **/
               sh './cleanup.sh'
             }
           }
       }
-
+*/
     stage('gke-to-gke-vpn-create') {
           container(containerName) {
             dir('gke-to-gke-vpn') {
@@ -116,9 +115,9 @@ spec:
     stage('gke-to-gke-vpn-validate') {
           container(containerName) {
             dir('gke-to-gke-vpn') {
-              sleep 360
-              sh './validate-pod-to-service-communication.sh'
+              sh './validate.sh'
             }
+            sh './validate-pod-to-service-communication.sh'
           }
     }
 
@@ -133,9 +132,9 @@ spec:
    catch (err) {
       stage('Teardown') {
         container(containerName) {
-          dir('gke-to-gke-peering') {
-            sh './cleanup.sh'
-          }
+//          dir('gke-to-gke-peering') {
+//            sh './cleanup.sh'
+//          }
           dir('gke-to-gke-vpn') {
             sh './cleanup.sh'
           }
@@ -148,6 +147,18 @@ spec:
       throw err
    }
    finally {
-   }
+     stage('Teardown') {
+        container(containerName) {
+//          dir('gke-to-gke-peering') {
+//
+//            sh './cleanup.sh'
+//          }
+          dir('gke-to-gke-vpn') {
+            sh './cleanup.sh'
+          }
+          sh "gcloud auth revoke"
+        }
+      }
+    }
   }
 }
